@@ -18,7 +18,7 @@
 ## 📸 Project Screenshot
 
 <div align="center">
-  <img src="public/screenshot.png" alt="Project Screenshot" width="100%" style="border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+  <img src="public/sreenshot.png" alt="Project Screenshot" width="100%" style="border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
 </div>
 
 ---
@@ -45,12 +45,12 @@
 
 ## 👨‍💻 Group Members (F15)
 
-| USN | Name | Role |
-| :--- | :--- | :--- |
-| **4NI24CI108** | **Sourabh** | Team Lead / Backend |
-| **4NI24CI104** | **Shreyas J** | Frontend / UI Design |
-| **4NI23CI040** | **Dimpu K J** | Documentation / Testing |
-| **4NI24CI123** | **Harsh vardhan** | Integration / Logic |
+| USN | Name |
+| :--- | :--- |
+| **4NI24CI108** | **Sourabh** |
+| **4NI24CI104** | **Shreyas J** |
+| **4NI23CI040** | **Dimpu K J** |
+| **4NI24CI123** | **Harsh vardhan** |
 
 ---
 
