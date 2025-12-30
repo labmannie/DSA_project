@@ -96,7 +96,7 @@ void printBanner() {
   printf(" | |_| | |_| |  __/ |_| |  __/              \n");
   printf("  \\__\\_\\\\__,_|\\___|\\__,_|\\___|              \n");
   printf("                                            \n");
-  printf("          " COLOR_ACCENT "ULTIMATE TASK MANAGER v4.0" RESET "\n");
+  printf("          " COLOR_ACCENT "ULTIMATE TASK MANAGER v1.0" RESET "\n");
   printf(COLOR_BORDER "========================================================"
                       "========================" RESET "\n\n");
 }
