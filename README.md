@@ -58,13 +58,12 @@ Execute the generated binary:
 
 ---
 
-## 👥 Group Members
-*(Edit this section with your actual details)*
+## 👥 Group Members (Team F15)
 
--   **Name 1**: [Your Roll No]
--   **Name 2**: [Roll No]
--   **Name 3**: [Roll No]
--   **Name 4**: [Roll No]
+-   **Sourabh**: 4NI24CI108
+-   **Shreyas J**: 4NI24CI104
+-   **Dimpu K J**: 4NI23CI040
+-   **Harsh vardhan**: 4NI24CI123
 
 ---
 
