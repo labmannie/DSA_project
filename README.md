@@ -1,4 +1,4 @@
-# Ultimate Task Manager v4.0 🚀
+# Ultimate Task Manager v1.0 🚀
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Language](https://img.shields.io/badge/language-C-orange.svg) ![Course](https://img.shields.io/badge/course-DSA-green.svg)
 
