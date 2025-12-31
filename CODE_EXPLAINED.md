@@ -1,109 +1,78 @@
-# 🎓 Code Explanation: Line-by-Line Breakdown
-**For Viva & Presentation Prep**
+# Code Explanation: Ultimate Task Manager v1.0
 
-This document explains the inner workings of `main.c`. Use this to understand exactly what is happening so you can answer any question from the external examiner!
+This document provides a component-level breakdown of the Task Management System source code.
 
----
+## 1. Architecture Overview
 
-## 1. Header Files (Lines 1-5)
-```c
-#include <stdio.h>  // For printf, scanf (Input/Output)
-#include <stdlib.h> // For malloc, free (Memory Management)
-#include <string.h> // For strcpy, strlen (String handling)
-...
-```
--   **Why?** These give us the basic tools we need. We use `malloc` because Linked Lists use dynamic memory (heap memory).
-
-## 2. ANSI Colors (Lines 8-30)
-```c
-#define BOLD "\033[1m"
-#define RED  "\033[31m"
-...
-```
--   **What?** These are "Escape Codes". When printed, the terminal changes color instead of showing text.
--   **Why?** To make the project look "Best Ever" and vibrant as requested!
-
-## 3. Data Structures (Lines 34-58)
-
-### The Task Struct
-```c
-typedef struct {
-    int id;
-    int priority;
-    char title[TITLE_LEN]; ...
-} Task;
-```
--   Holds the actual data: ID, Priority, Title.
-
-### The Node Struct
-```c
-typedef struct Node {
-    Task task;
-    struct Node* next;
-} Node;
-```
--   **Crucial Step**: This makes it a **Linked List**.
--   `next`: Points to the next task in the chain.
-
-### The PriorityQueue Struct
-```c
-typedef struct {
-    Node* head;
-    int size; 
-    ...
-} PriorityQueue;
-```
--   **Why?** Instead of just a global `head` variable, we wrap it in a struct. This is "Proper Coding Practice" for ADTs (Abstract Data Types). It allows us to pass `&pq` to functions.
+The system is built on two primary pillars:
+1.  **The Priority Queue Backend**: Pure C logic using a Singly Linked List to store and manage tasks.
+2.  **The Rendering Engine**: A custom-built UI layer that handles ANSI colors, alignment math, and layout management.
 
 ---
 
-## 4. Core Logic Functions
+## 2. Rendering Engine Logic
 
-### `initQueue`
-Sets `head = NULL`. This means the list starts empty.
+The unique feature of this project is its "Math-Proof" alignment. Unlike standard `printf`, we calculate padding dynamically.
 
-### `enqueue` (THE MOST IMPORTANT FUNCTION)
-**Goal**: Insert a new task but keep the list **SORTED** by priority (Highest -> Lowest).
+### `UI_WIDTH` Constant
+Defined as `60`, this is the anchor for all calculations. Every single line of output inside the box is guaranteed to be exactly 60 characters wide.
 
-**Logic Flow**:
-1.  **Create Node**: `malloc(sizeof(Node))`.
-2.  **Case 1 (Head Update)**:
-    -   If the list is empty OR new priority > head priority.
-    -   **Action**: New node becomes the NEW Head.
-3.  **Case 2 (Traversal)**:
-    -   If not Case 1, we must find the right spot.
-    -   **Loop**: `while (current->next != NULL && current->next->task.priority >= priority)`
-    -   We keep moving `current` forward as long as the next node is *more important* than our new one.
-    -   **Insert**: Once we stop, we squeeze our new node in:
-        ```c
-        newNode->next = current->next;
-        current->next = newNode;
-        ```
+### `print_centered(text)`
+Calculates padding to center any string within the box:
+```c
+int padding_l = (UI_WIDTH - len) / 2;
+int padding_r = UI_WIDTH - len - padding_l;
+```
+This ensures that `Padding Left + Text Length + Padding Right` always equals `UI_WIDTH`.
 
-### `dequeue`
-**Goal**: Remove the highest priority task.
--   Because we sorted on insertion, **Highest Priority is ALWAYS at the Head**.
--   **Action**:
-    1.  Save data of `head`.
-    2.  Move head pointer: `head = head->next`.
-    3.  `free(temp)` to prevent memory leaks!
+### `print_row(label, value)`
+Used for key-value pairs like "PENDING TASKS ...... 5".
+It calculates the exact number of dots needed to fill the gap between the label and the value:
+```c
+int dots = 56 - len_label - len_val;
+```
+The constant `56` comes from `UI_WIDTH (60)` minus the default padding spaces (4).
 
 ---
 
-## 5. Visualization Helper
+## 3. Data Structure: Priority Queue
 
-### `visualizeQueue`
-loops through the list and prints:
-`[Priority] --> [Priority] --> NULL`
--   It changes color (Red/Yellow/Green) based on how high the priority number is.
--   This proves to the examiner you know how to traverse a linked list!
+We use a **Linked List** instead of an Array or Heap for simplicity and dynamic sizing.
+
+### `enqueue(priority, title)` - O(N)
+We perform a **Sorted Insert**. When a new task arrives:
+1.  We iterate through the list starting from `head`.
+2.  We look for the first node that has a *lower* priority than our new task.
+3.  We insert our new task *before* that node.
+
+This ensures the list is **Always Sorted**, meaning the highest priority task is always at the `head`.
+
+### `dequeue()` - O(1)
+Because the list is always sorted, the most important task is simply `head`.
+1.  Store the data from `head`.
+2.  Move `head` pointer to `head->next`.
+3.  `free()` the old head memory.
+4.  Return the data.
 
 ---
 
-## 6. Main Function
--   Uses a `while(1)` loop (Infinite Loop) to keep the menu running until you choose "Exit".
--   `switch(choice)` handles the user input.
--   **Safety**: Uses `scanf("%d", &choice)` but checks if it failed to prevent infinite loops on bad input.
+## 4. Input Validation
+
+In `main()`, we use a robust `do-while` loop for priority input:
+```c
+do {
+  // check scanf result AND range logic
+} while (p < 1 || p > 100);
+```
+This prevents the UI from breaking if a user enters "abc" or "999".
 
 ---
-**Viva Tip**: If asked "Why Linked List over Array?", say: "Linked Lists allow O(1) Dequeue operations (removing from front) without shifting all other elements like an Array would require."
+
+## 5. Visual Design (ANSI Codes)
+
+We use extensive ANSI escape codes to create a "Neon" look.
+-   `\033[38;5;51m`: Cyber Cyan
+-   `\033[38;5;213m`: Hot Pink/Magenta
+-   Box Drawing Characters (`╔`, `║`, `╚`): Creating the solid borders.
+
+This combination results in a terminal interface that looks like a modern dashboard application.
