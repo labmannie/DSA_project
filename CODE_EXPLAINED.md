@@ -10,28 +10,19 @@ The system is built on two primary pillars:
 
 ---
 
-## 2. Rendering Engine Logic
+## 2. Visual Presentation
 
-The unique feature of this project is its "Math-Proof" alignment. Unlike standard `printf`, we calculate padding dynamically.
+The interface prioritizes stability and exact formatting over dynamic resizing.
 
-### `UI_WIDTH` Constant
-Defined as `60`, this is the anchor for all calculations. Every single line of output inside the box is guaranteed to be exactly 60 characters wide.
+### Static Layouts
+To eliminate calculations and potential alignment bugs during runtime, the specific borders, spacing, and headers are **hardcoded**. This ensures that the application always looks exactly as intended, with a fixed width of 60 characters.
 
-### `print_centered(text)`
-Calculates padding to center any string within the box:
+### Inline Logic
+For dynamic rows (like task lists), we perform simple inline calculations to ensure dot leaders (`....`) fill the remaining space perfectly:
 ```c
-int padding_l = (UI_WIDTH - len) / 2;
-int padding_r = UI_WIDTH - len - padding_l;
+int dots = 56 - strlen(label) - strlen(value);
 ```
-This ensures that `Padding Left + Text Length + Padding Right` always equals `UI_WIDTH`.
-
-### `print_row(label, value)`
-Used for key-value pairs like "PENDING TASKS ...... 5".
-It calculates the exact number of dots needed to fill the gap between the label and the value:
-```c
-int dots = 56 - len_label - len_val;
-```
-The constant `56` comes from `UI_WIDTH (60)` minus the default padding spaces (4).
+This keeps the code simple and predictable.
 
 ---
 

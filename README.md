@@ -4,12 +4,16 @@
 
 A high-performance, vibrant **Command Line Interface (CLI)** Task Management System built for the **Data Structures and Algorithms** course. This project demonstrates the robust implementation of a **Priority Queue** using a **Singly Linked List**.
 
+The system is built on two primary pillars:
+1.  **The Priority Queue Backend**: Pure C logic using a Singly Linked List to store and manage tasks.
+2.  **The Static UI Layer**: A robust, hardcoded interface that handles ANSI colors and layout management.
+
 ---
 
 ## 🌟 Key Features
 
 -   **Priority Queue ADT**: Implements core queue operations with priority-based ordering.
--   **Math-Proof Aligned UI**: A custom rendering engine ensures perfect alignment of borders and text, regardless of content length.
+-   **Precision-Crafted UI**: A pre-calculated, hardcoded layout ensures pixel-perfect alignment and consistent visual presentation.
 -   **Vibrant Dashboard**: Uses a neon-cyberpunk aesthetic with calculated layouts for a "Control Deck" feel.
 -   **Input Validation**: Strict enforcement of priority range (1-100) to prevent errors.
 -   **Zero Dependencies**: Pure C implementation requiring only standard libraries.
@@ -63,7 +67,7 @@ Execute the generated binary:
 
 -   **Sourabh**: 4NI24CI108
 -   **Shreyas J**: 4NI24CI104
--   **Dimpu K J**: 4NI23CI040
+-   **Dimpu K J**: 4NI24CI040
 -   **Harsh vardhan**: 4NI24CI123
 
 ---

@@ -72,60 +72,6 @@ typedef struct {
  * correct.
  */
 
-// Draw a horizontal line with specific start, middle, and end characters.
-// Usage: print_line("╔", "═", "╗", C_BLUE) -> Draws top border
-void print_line(const char *start, const char *fill, const char *end,
-                const char *color) {
-  printf("    %s%s", color, start);
-  for (int i = 0; i < UI_WIDTH; i++)
-    printf("%s", fill);
-  printf("%s" RESET "\n", end);
-}
-
-// Print text centered within the UI_WIDTH.
-// Calculates exact left/right padding based on text string length.
-void print_centered(const char *text, const char *text_color,
-                    const char *border_color) {
-  int len = strlen(text);
-  int padding_l = (UI_WIDTH - len) / 2;
-  int padding_r = UI_WIDTH - len - padding_l;
-
-  printf("    %s║%s", border_color, RESET);
-  for (int i = 0; i < padding_l; i++)
-    printf(" ");
-  printf("%s%s" RESET, text_color, text);
-  for (int i = 0; i < padding_r; i++)
-    printf(" ");
-  printf("%s║" RESET "\n", border_color);
-}
-
-// Print a key-value row with dot leaders: "Key .......... Value"
-// Target Inner Width: 60
-// Layout: space(1) + Label(L) + space(1) + Dots(D) + space(1) + Value(V) +
-// space(1) Formula needed for dot calculation: D = 56 - L - V
-void print_row(const char *label, const char *value, const char *label_col,
-               const char *val_col, const char *border_col) {
-  int len_label = strlen(label);
-  int len_val = strlen(value);
-  int dots = 56 - len_label - len_val;
-  if (dots < 0)
-    dots = 0;
-
-  printf("    %s║ %s%s" RESET " ", border_col, label_col, label);
-  for (int i = 0; i < dots; i++)
-    printf("%s.", C_GREY);
-  printf(" %s%s" RESET " %s║" RESET "\n", val_col, value, border_col);
-}
-
-// Print a menu option formatted as a button.
-// Length Check: 2 (spaces) + 5 ([ X ]) + 1 (space) + 52 (padded desc) = 60.
-void print_menu_item(int key, const char *desc, const char *key_color,
-                     const char *desc_color, const char *border_col) {
-  printf("    %s║" RESET, border_col);
-  printf("  %s[ %d ]" RESET " %s%-52s" RESET, key_color, key, desc_color, desc);
-  printf("%s║" RESET "\n", border_col);
-}
-
 // Helper to clear terminal
 void clear_screen() { printf("\033[H\033[J"); }
 
@@ -133,8 +79,12 @@ void clear_screen() { printf("\033[H\033[J"); }
 void print_banner() {
   clear_screen();
   printf("\n");
-  print_line("╔", "═", "╗", C_BLUE);
-  print_centered("", C_WHITE, C_BLUE);
+  printf("    " C_BLUE
+         "╔════════════════════════════════════════════════════════════╗" RESET
+         "\n");
+  printf("    " C_BLUE
+         "║                                                            ║" RESET
+         "\n");
 
   // ASCII Art - Manually Aligned by User
   printf("    " C_BLUE "║" RESET C_CYAN
@@ -156,10 +106,18 @@ void print_banner() {
          "      ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝     " C_BLUE
          "           ║" RESET "\n");
 
-  print_centered("", C_WHITE, C_BLUE);
-  print_centered("ULTIMATE MANAGER v1.0", C_MAGENTA BOLD, C_BLUE);
-  print_centered("", C_WHITE, C_BLUE);
-  print_line("╚", "═", "╝", C_BLUE);
+  printf("    " C_BLUE
+         "║                                                            ║" RESET
+         "\n");
+  printf("    " C_BLUE "║                   " C_MAGENTA BOLD
+         "ULTIMATE MANAGER v1.0" RESET "                    " C_BLUE "║" RESET
+         "\n");
+  printf("    " C_BLUE
+         "║                                                            ║" RESET
+         "\n");
+  printf("    " C_BLUE
+         "╚════════════════════════════════════════════════════════════╝" RESET
+         "\n");
   printf("\n");
 }
 
@@ -228,17 +186,34 @@ Task dequeue(PriorityQueue *pq) {
 
 // Render the System Stats and Waiting queue summary
 void show_status(PriorityQueue *pq) {
-  print_line("╔", "═", "╗", C_MAGENTA);
-  print_centered("SYSTEM STATUS", C_WHITE BOLD, C_MAGENTA);
-  print_line("╠", "─", "╣", C_MAGENTA);
+  printf("    " C_MAGENTA
+         "╔════════════════════════════════════════════════════════════╗" RESET
+         "\n");
+  printf("    " C_MAGENTA "║" RESET "                       " C_WHITE BOLD
+         "SYSTEM STATUS" RESET "                        " C_MAGENTA "║" RESET
+         "\n");
+  printf("    " C_MAGENTA
+         "╠────────────────────────────────────────────────────────────╣" RESET
+         "\n");
 
   char buf[64];
   sprintf(buf, "%d", pq->size);
-  print_row("PENDING TASKS", buf, C_CYAN, C_WHITE BOLD, C_MAGENTA);
+
+  // Inline logic for "PENDING TASKS"
+  int dots = 56 - strlen("PENDING TASKS") - strlen(buf);
+  printf("    " C_MAGENTA "║ " C_CYAN "PENDING TASKS" RESET " ");
+  for (int i = 0; i < dots; i++)
+    printf(C_GREY ".");
+  printf(" " C_WHITE BOLD "%s" RESET " " C_MAGENTA "║" RESET "\n", buf);
 
   if (pq->head) {
     sprintf(buf, "%d", pq->head->task.priority);
-    print_row("HIGHEST PRIORITY", buf, C_YELLOW, C_RED BOLD, C_MAGENTA);
+    // Inline logic for "HIGHEST PRIORITY"
+    dots = 56 - strlen("HIGHEST PRIORITY") - strlen(buf);
+    printf("    " C_MAGENTA "║ " C_YELLOW "HIGHEST PRIORITY" RESET " ");
+    for (int i = 0; i < dots; i++)
+      printf(C_GREY ".");
+    printf(" " C_RED BOLD "%s" RESET " " C_MAGENTA "║" RESET "\n", buf);
 
     // Truncate title to ensure it fits in the layout
     char title_display[30];
@@ -248,42 +223,73 @@ void show_status(PriorityQueue *pq) {
     else
       title_display[strlen(pq->head->task.title)] = 0;
 
-    print_row("NEXT UP", title_display, C_GREEN, C_WHITE, C_MAGENTA);
+    // Inline logic for "NEXT UP"
+    dots = 56 - strlen("NEXT UP") - strlen(title_display);
+    printf("    " C_MAGENTA "║ " C_GREEN "NEXT UP" RESET " ");
+    for (int i = 0; i < dots; i++)
+      printf(C_GREY ".");
+    printf(" " C_WHITE "%s" RESET " " C_MAGENTA "║" RESET "\n", title_display);
+
   } else {
-    print_centered("Waiting for input...", C_GREY, C_MAGENTA);
+    printf("    " C_MAGENTA "║" RESET "                    " C_GREY
+           "Waiting for input..." RESET "                    " C_MAGENTA
+           "║" RESET "\n");
   }
-  print_line("╚", "═", "╝", C_MAGENTA);
+  printf("    " C_MAGENTA
+         "╚════════════════════════════════════════════════════════════╝" RESET
+         "\n");
   printf("\n");
 }
 
 // Render the Interaction Menu
 void show_menu() {
-  print_line("╔", "═", "╗", C_CYAN);
-  print_centered("CONTROL DECK", C_WHITE BOLD, C_CYAN);
-  print_line("╠", "─", "╣", C_CYAN);
-  print_menu_item(1, "Create New Task", C_MAGENTA BOLD, C_WHITE, C_CYAN);
-  print_menu_item(2, "Process Highest Priority", C_MAGENTA BOLD, C_WHITE,
-                  C_CYAN);
-  print_menu_item(3, "Visualize Queue Chain", C_MAGENTA BOLD, C_WHITE, C_CYAN);
-  print_line("╠", "─", "╣", C_CYAN);
-  print_menu_item(0, "Shut Down System", C_RED BOLD, C_GREY, C_CYAN);
-  print_line("╚", "═", "╝", C_CYAN);
+  printf("    " C_CYAN
+         "╔════════════════════════════════════════════════════════════╗" RESET
+         "\n");
+  printf("    " C_CYAN "║" RESET "                        " C_WHITE BOLD
+         "CONTROL DECK" RESET "                        " C_CYAN "║" RESET "\n");
+  printf("    " C_CYAN
+         "╠────────────────────────────────────────────────────────────╣" RESET
+         "\n");
+
+  printf("    " C_CYAN "║" RESET "  " C_MAGENTA BOLD "[ 1 ]" RESET " " C_WHITE
+         "%-52s" RESET C_CYAN "║" RESET "\n",
+         "Create New Task");
+  printf("    " C_CYAN "║" RESET "  " C_MAGENTA BOLD "[ 2 ]" RESET " " C_WHITE
+         "%-52s" RESET C_CYAN "║" RESET "\n",
+         "Process Highest Priority");
+  printf("    " C_CYAN "║" RESET "  " C_MAGENTA BOLD "[ 3 ]" RESET " " C_WHITE
+         "%-52s" RESET C_CYAN "║" RESET "\n",
+         "Visualize Queue Chain");
+
+  printf("    " C_CYAN
+         "╠────────────────────────────────────────────────────────────╣" RESET
+         "\n");
+  printf("    " C_CYAN "║" RESET "  " C_RED BOLD "[ 0 ]" RESET " " C_GREY
+         "%-52s" RESET C_CYAN "║" RESET "\n",
+         "Shut Down System");
+  printf("    " C_CYAN
+         "╚════════════════════════════════════════════════════════════╝" RESET
+         "\n");
   printf("\n");
 }
 
 // Visualize the queue as a table
 void show_all_tasks(PriorityQueue *pq) {
-  print_line("╔", "═", "╗", C_GREEN);
+  printf("    " C_GREEN
+         "╔════════════════════════════════════════════════════════════╗" RESET
+         "\n");
 
   // Header Inner Width 60
   // " ID    PRI   TASK DETAILS                                   " (60 chars)
-  // 1+4+3+3+3+46 = 60.
   printf("    " C_GREEN "║" RESET C_BLACK BG_MAGENTA
          " ID    PRI   TASK DETAILS                                  "
          " " RESET C_GREEN "║" RESET "\n");
 
   if (!pq->head) {
-    print_centered("No Active Tasks", C_GREY, C_GREEN);
+    printf("    " C_GREEN "║" RESET "                      " C_GREY
+           "No Active Tasks" RESET "                       " C_GREEN "║" RESET
+           "\n");
   } else {
     Node *curr = pq->head;
     int count = 0;
@@ -308,16 +314,21 @@ void show_all_tasks(PriorityQueue *pq) {
              curr->task.id, prio_color, curr->task.priority, title_cut);
 
       if (curr->next && count < 4) {
-        print_line("╠", "─", "╣", C_GREEN);
+        printf("    " C_GREEN "╠───────────────────────────────────────────────"
+               "─────────────╣" RESET "\n");
       }
       curr = curr->next;
       count++;
     }
     if (curr) {
-      print_centered("... more tasks ...", C_GREY, C_GREEN);
+      printf("    " C_GREEN "║" RESET "                     " C_GREY
+             "... more tasks ..." RESET "                     " C_GREEN
+             "║" RESET "\n");
     }
   }
-  print_line("╚", "═", "╝", C_GREEN);
+  printf("    " C_GREEN
+         "╚════════════════════════════════════════════════════════════╝" RESET
+         "\n");
 }
 
 // Pauses execution for user to read output
@@ -356,9 +367,17 @@ int main() {
     if (choice == 1) {
       // --- CREATE NEW TASK SCENE ---
       printf("\n");
-      print_line("╔", "═", "╗", C_BLUE);
-      print_centered("NEW TASK ENTRY", C_WHITE BOLD, C_BLUE);
-      print_line("╚", "═", "╝", C_BLUE);
+      printf(
+          "    " C_BLUE
+          "╔════════════════════════════════════════════════════════════╗" RESET
+          "\n");
+      printf("    " C_BLUE "║" RESET "                       " C_WHITE BOLD
+             "NEW TASK ENTRY" RESET "                       " C_BLUE "║" RESET
+             "\n");
+      printf(
+          "    " C_BLUE
+          "╚════════════════════════════════════════════════════════════╝" RESET
+          "\n");
 
       int p;
       char t[TITLE_LEN];
